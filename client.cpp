@@ -13,10 +13,12 @@ int main(int argc, char *argv[])
 
 	//Initialize listening socket
 	portno = atoi(argv[2]);
+	//Open socket file descriptor
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0) {
 		std::cout << "ERROR opening socket" << std::endl;
 	}
+	//translate host in the args to ip
 	server = gethostbyname(argv[1]);
 	if (server == NULL) {
 		fprintf(stderr,"ERROR, no such host\n");

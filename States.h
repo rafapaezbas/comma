@@ -14,6 +14,7 @@ int sockfd, portno, n;
 struct sockaddr_in serv_addr;
 struct hostent *server;
 char buffer[256];
+int x;
 
 struct State {
 	virtual void execute(){};
@@ -30,18 +31,13 @@ struct DefaultState : State {
 
 	void execute() override{
 		printf("Please enter the message: ");
-		bzero(buffer,256);
-		fgets(buffer,255,stdin);
-		n = write(sockfd,buffer,strlen(buffer));
-		if (n < 0){
-		}
-		//Reset buffer
+		std::cin >> x;
+		n = write(sockfd,"ad",3);
 		bzero(buffer,256);
 		n = read(sockfd,buffer,255);
 		if (n < 0) {
 		}
 		printf("%s\n",buffer);
-		close(sockfd);
 	}
 };
 
