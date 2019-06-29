@@ -1,18 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h> 
-#include <vector>
-#include <iostream>
-
-int sockfd, portno, n;
-struct sockaddr_in serv_addr;
-struct hostent *server;
-std::string command;
+#include "connect.h"
 
 /**
  * States table
@@ -33,6 +19,7 @@ struct DefaultState : State {
 	}
 
 	void execute() override{
+		std::string command;
 		printf("Command: ");
 		std::cin >> command;
 		write(sockfd,command.c_str(),255);
