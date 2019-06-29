@@ -2,9 +2,15 @@
 
 int main(int argc, char *argv[])
 {
-	State *currentState;
-	std::vector<State> states = std::vector<State>();
-	currentState = new DefaultState(currentState,&states);
+	int currentState = 0; //defaultState
+	char inputBuffer[256];
+	std::vector<State*> states = std::vector<State*>();
+
+	//States instantiation
+	states.push_back(new DefaultState(&currentState));
+	states.push_back(new WaitingTreeSizeState(&currentState,inputBuffer));
+	states.push_back(new WaitingTreeState(&currentState,inputBuffer));
+
 
 	if (argc < 3) {
 		fprintf(stderr,"usage %s hostname port\n", argv[0]);
@@ -31,7 +37,7 @@ int main(int argc, char *argv[])
 		std::cout << "ERROR connecting" << std::endl;
 	}
 	while(true){
-		currentState->execute();
+		states.at(currentState)->execute();
 	}
 	return 0;
 }

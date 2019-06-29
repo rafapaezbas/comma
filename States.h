@@ -9,12 +9,17 @@
 #include <vector>
 #include <iostream>
 
-
 int sockfd, portno, n;
 struct sockaddr_in serv_addr;
 struct hostent *server;
-char buffer[256];
-int x;
+std::string command;
+
+/**
+ * States table
+ * defaultState = 0,
+ * waitingTreeSize = 1,
+ * waitingTree = 2,
+ */
 
 struct State {
 	virtual void execute(){};
@@ -22,32 +27,57 @@ struct State {
 
 struct DefaultState : State {
 
-	State* currentState;
-	std::vector<State>* states;
-	DefaultState(State* currentState_,std::vector<State>* states_){
+	int* currentState;
+	DefaultState(int* currentState_){
 		currentState = currentState_;
-		states = states_;
 	}
 
 	void execute() override{
-		printf("Please enter the message: ");
-		std::cin >> x;
-		n = write(sockfd,"ad",3);
-		bzero(buffer,256);
-		n = read(sockfd,buffer,255);
-		if (n < 0) {
+		printf("Command: ");
+		std::cin >> command;
+		write(sockfd,command.c_str(),255);
+		if(command == "tree"){
+			*currentState = 1;
 		}
-		printf("%s\n",buffer);
-	}
-};
-
-struct WaitingTreeState : State {
-	void execute() override{
 	}
 };
 
 struct WaitingTreeSizeState : State {
+
+	int* currentState;
+	char* inputBuffer = new char[256];
+
+	WaitingTreeSizeState(int* currentState_,char (&inputBuffer_)[256]){
+		currentState = currentState_;
+		inputBuffer = inputBuffer_;
+	}
+
 	void execute() override{
+		std::cout << "Waiting tree size" << std::endl;
+		read(sockfd,inputBuffer,255);
+		*currentState = 2;
+	}
+};
+
+struct WaitingTreeState : State {
+
+	int* currentState;
+	char* inputBuffer = new char[256];
+
+	WaitingTreeState(int* currentState_,char (&inputBuffer_)[256]){
+		currentState = currentState_;
+		inputBuffer = inputBuffer_;
+	}
+
+	void execute() override{
+		std::cout << "Waiting tree" << std::endl;
+		int treeSize = atoi(inputBuffer);
+		std::cout << treeSize << std::endl;
+		char tree[treeSize];
+		write(sockfd,"tree-ready",255);
+		read(sockfd,tree,treeSize + 1);
+		std::cout << tree << std::endl;
+		*currentState = 0;
 	}
 };
 
