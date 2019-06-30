@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <experimental/filesystem>
 #include <vector>
+#include <arpa/inet.h>
 
 
 void error(std::string msg)
@@ -27,7 +28,7 @@ std::vector<std::string> readTree(std::string path){
 std::string joinTree(std::vector<std::string> tree){
 	std::string result = "";
 	for(std::string element : tree){
-		result = result + element;
+		result = result + element + "\n";
 	}
 	return result;
 }
@@ -60,15 +61,16 @@ int main (int argc, char** argv){
 	//main loop
 	while(1){
 		n = read(newsockfd,buffer,255);
+		//obtain client ip
+		char *clientip = new char[20];
+		strcpy(clientip, inet_ntoa(cli_addr.sin_addr));
 		if (n < 0) {
 			error("ERROR reading from socket");
 		}
 		std::string command(buffer);
-		std::cout << command << std::endl;
 
 		if(command == "tree"){
 			std::string tree = joinTree(readTree("/home/rafa/Escritorio"));
-			std::cout << tree << std::endl;
 			std::string treeSize = std::to_string(strlen(tree.c_str()));
 			n = write(newsockfd,treeSize.c_str(),sizeof(treeSize.c_str()));
 			if (n < 0){
