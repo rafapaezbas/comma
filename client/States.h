@@ -60,10 +60,14 @@ struct WaitingTreeState : State {
 		std::cout << "Waiting tree" << std::endl;
 		int treeSize = atoi(inputBuffer);
 		std::cout << treeSize << std::endl;
-		char tree[treeSize];
 		write(sockfd,"tree-ready",255);
-		read(sockfd,tree,treeSize + 1);
-		std::cout << tree << std::endl;
+		char tree[treeSize];
+		int r = 0;
+		while(r < treeSize){
+			r = r + read(sockfd,tree,treeSize + 1);
+			std::cout << tree << std::endl;
+		}
+		std::cout << r << std::endl;
 		*currentState = 0;
 	}
 };
