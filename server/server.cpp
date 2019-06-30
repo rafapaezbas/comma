@@ -19,7 +19,7 @@ namespace fs = std::experimental::filesystem;
 
 std::vector<std::string> readTree(std::string path){
 	std::vector<std::string> paths;
-	for (auto entry : fs::recursive_directory_iterator("/media/rafa")){
+	for (auto entry : fs::recursive_directory_iterator("/home/rafa/Escritorio")){
 		paths.push_back(entry.path());
 	}
 	return paths;
@@ -80,7 +80,8 @@ int main (int argc, char** argv){
 
 		if(command == "tree-ready"){
 			std::string tree = joinTree(readTree("/home/rafa/Escritorio"));
-			n = write(newsockfd,tree.c_str(),strlen(tree.c_str() + 1));
+			std::cout << tree << std::endl;
+			n = write(newsockfd,tree.c_str(),strlen(tree.c_str()) + 1);
 			if (n < 0){
 				error("ERROR writing to socket");
 			}
