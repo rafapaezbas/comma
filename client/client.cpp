@@ -16,6 +16,8 @@ int main(int argc, char *argv[]){
 	states.push_back(new DefaultState(&currentState));
 	states.push_back(new WaitingTreeSizeState(&currentState,inputBuffer));
 	states.push_back(new WaitingTreeState(&currentState,inputBuffer));
+	states.push_back(new WaitingFileSizeState(&currentState,inputBuffer));
+	states.push_back(new WaitingFileState(&currentState,inputBuffer));
 
 
 	while(true){

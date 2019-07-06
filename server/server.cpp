@@ -33,6 +33,15 @@ std::string joinTree(std::vector<std::string> tree){
 	return result;
 }
 
+int get_file_size(std::string filename){
+	FILE *p_file = NULL;
+	p_file = fopen(filename.c_str(),"rb");
+	fseek(p_file,0,SEEK_END);
+	int size = ftell(p_file);
+	fclose(p_file);
+	return size;
+}
+
 int main (int argc, char** argv){
 
 	//sock file descriptor, network file descriptor
@@ -86,11 +95,32 @@ int main (int argc, char** argv){
 				error("ERROR writing to socket");
 			}
 		}
+
+		if(command == "f"){
+			int fileSize = get_file_size("/home/rafa/Escritorio/song.wav");
+			n = write(newsockfd,std::to_string(fileSize).c_str(),fileSize + 1);
+			if (n < 0){
+				error("ERROR writing to socket");
+			}
+		}
+		if(command == "file-ready"){
+			int fileSize = get_file_size("/home/rafa/Escritorio/song.wav");
+			FILE* fp = fopen("/home/rafa/Escritorio/song.wav", "rb");
+			if (fp == NULL) 
+			{
+				perror("Can't open file");
+				exit(1);
+			}
+			char fileBuffer[fileSize];
+			fread(fileBuffer,1,fileSize,fp);
+			n = write(newsockfd,fileBuffer,sizeof(fileBuffer) + 1);
+			if (n < 0){
+				error("ERROR writing to socket");
+			}
+		}
 	}
 
 	close(newsockfd);
 	close(sockfd);
 	return 0; 
 }
-
-
