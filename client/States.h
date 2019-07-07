@@ -110,21 +110,22 @@ struct WaitingFileState : State {
 	void execute() override{
 		std::cout << "Waiting file." << std::endl;
 		int fileSize = atoi(inputBuffer);
+		std::cout << "Filesize:" << std::endl;
 		std::cout << fileSize << std::endl;
 		write(sockfd,"file-ready",255);
-		char file[fileSize];
+		int total = 0; //total bytes received
 		int r = 0;
-		while(r < fileSize){
-			r = r + read(sockfd,file,fileSize + 1);
+		while(total < fileSize){
+			char file_temp[fileSize];
+			r = read(sockfd,file_temp,fileSize + 1);
+			std::cout << "received bytes: " << std::endl;
+			std::cout << r << std::endl;
+			//Apend to file
+			FILE *fp = fopen("/home/rafa/Escritorio/file.mp3", "ab");
+			fwrite(file_temp, 1, r, fp);
+			fclose(fp);
+			total = total + r;
 		}
-		std::cout << r << std::endl;
 		*currentState = 0;
-		FILE *fp = fopen("/home/rafa/Escritorio/file", "wb");
-		if (fp == NULL) 
-		{
-			perror("Can't open file");
-			exit(1);
-		}
-		fwrite(file, sizeof(char), fileSize, fp);
 	}
 };
