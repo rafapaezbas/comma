@@ -16,21 +16,21 @@ struct State {
 struct DefaultState : State {
 
 	int* currentState;
-	DefaultState(int* currentState_){
+	std::string* command;
+	DefaultState(int* currentState_,std::string* command_){
 		currentState = currentState_;
+		command = command_;
 	}
 
 	void execute() override{
-		std::string command;
 		printf("Command: ");
-		std::cin >> command;
-		write(sockfd,command.c_str(),255);
+		write(sockfd,command->c_str(),255);
 
-		if(command == "tree"){
+		if(*command == "tree"){
 			*currentState = 1;
 		}
 
-		if(command == "f"){ //file request
+		if(command->at(0) == 'f' && command->at(1) == ' '){ //file request
 			*currentState = 3;
 		}
 	}
@@ -101,10 +101,12 @@ struct WaitingFileState : State {
 
 	int* currentState;
 	char* inputBuffer = new char[256];
+	std::string* command;
 
-	WaitingFileState(int* currentState_,char (&inputBuffer_)[256]){
+	WaitingFileState(int* currentState_,char (&inputBuffer_)[256],std::string* command_){
 		currentState = currentState_;
 		inputBuffer = inputBuffer_;
+		command = command_;
 	}
 
 	void execute() override{
@@ -112,7 +114,8 @@ struct WaitingFileState : State {
 		int fileSize = atoi(inputBuffer);
 		std::cout << "Filesize:" << std::endl;
 		std::cout << fileSize << std::endl;
-		write(sockfd,"file-ready",255);
+		std::string path = command->substr(2);
+		write(sockfd,("d " + path).c_str(),255);
 		int total = 0; //total bytes received
 		int r = 0;
 		while(total < fileSize){
@@ -121,7 +124,7 @@ struct WaitingFileState : State {
 			std::cout << "received bytes: " << std::endl;
 			std::cout << r << std::endl;
 			//Apend to file
-			FILE *fp = fopen("/home/rafa/Escritorio/file.mp3", "ab");
+			FILE *fp = fopen("/home/rafa/Escritorio/file", "ab");
 			fwrite(file_temp, 1, r, fp);
 			fclose(fp);
 			total = total + r;

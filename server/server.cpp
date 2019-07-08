@@ -76,10 +76,11 @@ int main (int argc, char** argv){
 		if (n < 0) {
 			error("ERROR reading from socket");
 		}
-		std::string command(buffer);
+
+		std::string command(buffer); //Store message received in buffer
 
 		if(command == "tree"){
-			std::string tree = joinTree(readTree("/home/rafa/Escritorio"));
+			std::string tree = joinTree(readTree("/home/ubuntu"));
 			std::string treeSize = std::to_string(strlen(tree.c_str()));
 			n = write(newsockfd,treeSize.c_str(),sizeof(treeSize.c_str()));
 			if (n < 0){
@@ -88,7 +89,7 @@ int main (int argc, char** argv){
 		}
 
 		if(command == "tree-ready"){
-			std::string tree = joinTree(readTree("/home/rafa/Escritorio"));
+			std::string tree = joinTree(readTree("/home/ubuntu"));
 			std::cout << tree << std::endl;
 			n = write(newsockfd,tree.c_str(),strlen(tree.c_str()) + 1);
 			if (n < 0){
@@ -96,16 +97,19 @@ int main (int argc, char** argv){
 			}
 		}
 
-		if(command == "f"){
-			int fileSize = get_file_size("/home/rafa/Escritorio/song.wav");
+		if(command[0] == 'f' && command[1] == ' '){
+			std::string path = command.substr(2);
+			int fileSize = get_file_size(path);
 			n = write(newsockfd,std::to_string(fileSize).c_str(),fileSize + 1);
 			if (n < 0){
 				error("ERROR writing to socket");
 			}
 		}
-		if(command == "file-ready"){
-			int fileSize = get_file_size("/home/rafa/Escritorio/song.wav");
-			FILE* fp = fopen("/home/rafa/Escritorio/song.wav", "rb");
+
+		if(command[0] == 'd' && command[1] == ' '){
+			std::string path = command.substr(2);
+			int fileSize = get_file_size(path);
+			FILE* fp = fopen(path.c_str(), "rb");
 			if (fp == NULL) 
 			{
 				perror("Can't open file");
@@ -119,7 +123,6 @@ int main (int argc, char** argv){
 			}
 		}
 	}
-
 	close(newsockfd);
 	close(sockfd);
 	return 0; 

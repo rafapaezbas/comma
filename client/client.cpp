@@ -10,15 +10,15 @@ int main(int argc, char *argv[]){
 	init_socket(atoi(argv[2]),argv[1]);
 
 	int currentState = 0;
+	std::string command;
 	char inputBuffer[256];
-	std::vector<State*> states = std::vector<State*>();
 
-	states.push_back(new DefaultState(&currentState));
+	std::vector<State*> states = std::vector<State*>();
+	states.push_back(new DefaultState(&currentState,&command));
 	states.push_back(new WaitingTreeSizeState(&currentState,inputBuffer));
 	states.push_back(new WaitingTreeState(&currentState,inputBuffer));
 	states.push_back(new WaitingFileSizeState(&currentState,inputBuffer));
-	states.push_back(new WaitingFileState(&currentState,inputBuffer));
-
+	states.push_back(new WaitingFileState(&currentState,inputBuffer,&command));
 
 	while(true){
 		states.at(currentState)->execute();
