@@ -78,6 +78,7 @@ int main (int argc, char** argv){
 		}
 
 		std::string command(buffer); //Store message received in buffer
+		std::cout << command << std::endl;
 
 		if(command == "tree"){
 			std::string tree = joinTree(readTree("/home/ubuntu"));
@@ -99,7 +100,9 @@ int main (int argc, char** argv){
 
 		if(command[0] == 'f' && command[1] == ' '){
 			std::string path = command.substr(2);
+			std::cout << path << std::endl;
 			int fileSize = get_file_size(path);
+			std::cout << fileSize << std::endl;
 			n = write(newsockfd,std::to_string(fileSize).c_str(),fileSize + 1);
 			if (n < 0){
 				error("ERROR writing to socket");
@@ -115,7 +118,10 @@ int main (int argc, char** argv){
 				perror("Can't open file");
 				exit(1);
 			}
+			std::cout << "file readed" << std::endl;
+			std::cout << fileSize << std::endl;
 			char fileBuffer[fileSize];
+			std::cout << "buffer ready" << std::endl;
 			fread(fileBuffer,1,fileSize,fp);
 			n = write(newsockfd,fileBuffer,sizeof(fileBuffer) + 1);
 			if (n < 0){

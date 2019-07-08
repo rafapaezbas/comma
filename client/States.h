@@ -23,7 +23,12 @@ struct DefaultState : State {
 	}
 
 	void execute() override{
+		std::cout << "Default State" << std::endl;
+		std::string command_temp;
 		printf("Command: ");
+		std::getline(std::cin, *command);
+		std::cout << *command << std::endl;
+
 		write(sockfd,command->c_str(),255);
 
 		if(*command == "tree"){
