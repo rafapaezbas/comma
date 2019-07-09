@@ -124,15 +124,15 @@ struct WaitingFileState : State {
 		int total = 0; //total bytes received
 		int r = 0;
 		while(total < fileSize){
-			char file_temp[fileSize];
+			char* file_temp = (char*) malloc(fileSize);
 			r = read(sockfd,file_temp,fileSize + 1);
 			std::cout << "received bytes: " << std::endl;
 			std::cout << r << std::endl;
-			//Apend to file
 			FILE *fp = fopen("/home/rafa/Escritorio/file", "ab");
 			fwrite(file_temp, 1, r, fp);
 			fclose(fp);
 			total = total + r;
+			free(file_temp);
 		}
 		*currentState = 0;
 	}

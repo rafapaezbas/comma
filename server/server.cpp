@@ -118,14 +118,19 @@ int main (int argc, char** argv){
 				perror("Can't open file");
 				exit(1);
 			}
-			std::cout << "file readed" << std::endl;
 			std::cout << fileSize << std::endl;
-			char fileBuffer[fileSize];
+			char* fileBuffer = (char*) malloc(fileSize);
 			std::cout << "buffer ready" << std::endl;
 			fread(fileBuffer,1,fileSize,fp);
-			n = write(newsockfd,fileBuffer,sizeof(fileBuffer) + 1);
-			if (n < 0){
-				error("ERROR writing to socket");
+			int n = 0;
+			while(n < fileSize){
+				int s = write(newsockfd,fileBuffer + n,sizeof(fileBuffer));
+				if (n < 0){
+					error("ERROR writing to socket");
+				}
+				n = n + s;
+				std::cout << "sended:" << std::endl;
+				std::cout << n << std::endl;
 			}
 		}
 	}
