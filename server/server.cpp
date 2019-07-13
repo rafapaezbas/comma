@@ -19,7 +19,7 @@ namespace fs = std::experimental::filesystem;
 
 std::vector<std::string> readTree(std::string path){
 	std::vector<std::string> paths;
-	for (auto entry : fs::recursive_directory_iterator("/home/rafa/Escritorio")){
+	for (auto entry : fs::recursive_directory_iterator("/home/ubuntu")){
 		paths.push_back(entry.path());
 	}
 	return paths;

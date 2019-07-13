@@ -1,0 +1,6 @@
+1- Fix consecutives donwloads.
+2- Refactor server code to State pattern.
+3- Write name of file with client.
+4- Create configuration file for client.
+5- Create configuration file for server.
+6- Crear servicio rest de cliente para interfaz grafica. (?)
